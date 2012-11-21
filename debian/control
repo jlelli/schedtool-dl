@@ -1,0 +1,27 @@
+Source: schedtool
+Section: utils
+Priority: extra
+Maintainer: Thibaut VARENE <varenet@debian.org>
+Build-Depends: debhelper (>= 5), linux-kernel-headers
+Standards-Version: 3.8.0
+
+Package: schedtool
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Queries/alters process' scheduling policy and CPU affinity
+ Schedtool can query or alter a process' scheduling policy in Linux,
+ specifically assigning SCHED_NORMAL, _FIFO, _RR, _BATCH, _ISO or _IDLEPRIO. It
+ can set static priority for _FIFO and _RR. Setting CPU-affinity and (re)nicing
+ is also possible, making schedtool the definitive interface to Linux scheduler.
+ .
+ It can be used to avoid skips and glitches in A/V applications, to lock
+ processes onto given CPUs on SMP/NUMA systems, which may be beneficial for
+ networking or benchmarks, or to adjust nice-levels of lesser important jobs to
+ maintain a high amount of interactive responsiveness under high load. It is
+ also handy to manage realtime processes.
+ .
+ If you don't know about scheduling policies, you probably don't want to use
+ this program - or learn and read "man sched_setscheduler".
+ .
+ Some supported scheduling policies (such as SCHED_ISO, or SCHED_IDLEPRIO) need
+ a patched kernel (eg. Con Kolivas' -ck patchset).

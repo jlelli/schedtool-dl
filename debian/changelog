@@ -1,0 +1,38 @@
+schedtool (1.3.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Uses the new cpu_set_t api found in newer glibcs
+
+ -- Thibaut VARENE <varenet@debian.org>  Fri, 19 Sep 2008 15:56:39 +0200
+
+schedtool (1.2.10-1) unstable; urgency=low
+
+  * New upstream release
+  * Sync up with upstream version number, no change
+
+ -- Thibaut VARENE <varenet@debian.org>  Sat, 15 Dec 2007 12:20:15 +0100
+
+schedtool (1.2.9-4) unstable; urgency=low
+
+  * Reword description and fix typo on Con's name
+
+ -- Thibaut VARENE <varenet@debian.org>  Wed, 09 May 2007 01:57:36 +0200
+
+schedtool (1.2.9-3) unstable; urgency=low
+
+  * Did we say "1.2.9"? ;) Fix wrong version string.
+
+ -- Thibaut VARENE <varenet@debian.org>  Fri, 23 Feb 2007 03:43:27 +0100
+
+schedtool (1.2.9-2) unstable; urgency=low
+
+  * Upload to unstable after almost a month in experimental.
+
+ -- Thibaut VARENE <varenet@debian.org>  Tue, 20 Feb 2007 03:20:33 +0100
+
+schedtool (1.2.9-1) experimental; urgency=low
+
+  * Initial release (Closes: #377546)
+
+ -- Thibaut VARENE <varenet@debian.org>  Sat,  6 Jan 2007 23:25:50 +0100
+
