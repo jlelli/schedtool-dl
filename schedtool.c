@@ -125,7 +125,7 @@ struct engine_s {
 
 
 int engine(struct engine_s *e);
-int set_process(pid_t pid, int policy, struct sched_param2 *p);
+int set_process(pid_t pid, int policy, struct sched_attr *p);
 static inline int val_to_char(int v);
 static char * cpuset_to_str(cpu_set_t *mask, char *str);
 static inline int char_to_val(int c);
@@ -390,7 +390,7 @@ int engine(struct engine_s *e)
 
 	exec_mode_special:
 		if(mode_set(e->mode, MODE_SETPOLICY)) {
-			struct sched_param2 p;
+			struct sched_attr p;
 
 			p.sched_priority= e->prio;
 			p.sched_runtime= e->rtime;
@@ -460,7 +460,7 @@ int engine(struct engine_s *e)
 }
 
 
-int set_process(pid_t pid, int policy, struct sched_param2 *p)
+int set_process(pid_t pid, int policy, struct sched_attr *p)
 {
 	int ret;
 
@@ -735,7 +735,7 @@ void print_prio_min_max(int policy)
 void print_process(pid_t pid)
 {
 	int policy, nice;
-	struct sched_param2 p;
+	struct sched_attr p;
 	cpu_set_t aff_mask;
 	CPUSET_HEXSTRING(aff_mask_hex);
 
@@ -745,7 +745,7 @@ void print_process(pid_t pid)
 	/* strict error checking not needed - it works or not. */
         errno=0;
 	if( ((policy=sched_getscheduler(pid)) < 0)
-	    || (sched_getparam2(pid, &p) < 0)
+	    || (sched_getattr(pid, &p, sizeof(p)) < 0)
 	    /* getpriority may successfully return negative values, so errno needs to be checked */
 	    || ((nice=getpriority(PRIO_PROCESS, pid)) && errno)
 	  ) {
