@@ -57,8 +57,6 @@ _syscall3 (int, sched_getaffinity, pid_t, pid, unsigned int, len, unsigned long 
 #define SF_SIG_RORUN	2
 #define SF_SIG_DMISS	4
 
-#define SCHED_ATTR_SIZE_VER0    48
-
 struct sched_attr {
 	int sched_priority;
 	unsigned int sched_flags;
