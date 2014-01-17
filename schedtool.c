@@ -291,8 +291,8 @@ int main(int ac, char **dc)
 		}
 #undef CHECK_RANGE_PRIO
 	} else if (policy == SCHED_DEADLINE) {
-		if (!dline || !rtime) {
-			decode_error("timing parameters are required for policy %s", TAB[policy]);
+		if (!dline || !rtime || prio) {
+			decode_error("timing parameters are required and prio must be 0 or omitted for policy %s", TAB[policy]);
 			return(ac-optind);
 		}
 	}
@@ -392,6 +392,8 @@ int engine(struct engine_s *e)
 		if(mode_set(e->mode, MODE_SETPOLICY)) {
 			struct sched_attr p;
 
+			p.size= sizeof(p);
+			p.sched_policy= e->policy;
 			p.sched_priority= e->prio;
 			p.sched_runtime= e->rtime;
 			p.sched_deadline= e->dline;
@@ -467,8 +469,13 @@ int set_process(pid_t pid, int policy, struct sched_attr *p)
 	char *msg1="could not set PID %d to %s";
 	char *msg2="could not set PID %d to raw policy #%d";
 
-	/* anything other than 0 indicates error */
-	if((ret=sched_setscheduler2(pid, policy, p))) {
+#ifdef DEBUG
+	printf("setting PID %d to policy %s, prio %d, runtime %llu, period %llu\n",
+		pid, TAB[p->sched_policy], p->sched_priority, p->sched_runtime, p->sched_period);
+#endif
+
+
+	if((ret=sched_setattr(pid, p))) {
 
                 /* la la pointer mismatch .. lala */
 		decode_error((CHECK_RANGE_POLICY(policy) ? msg1 : msg2),
@@ -745,7 +752,7 @@ void print_process(pid_t pid)
 	/* strict error checking not needed - it works or not. */
         errno=0;
 	if( ((policy=sched_getscheduler(pid)) < 0)
-	    || (sched_getattr(pid, &p, sizeof(p)) < 0)
+	    || (sched_getattr(pid, &p) < 0)
 	    /* getpriority may successfully return negative values, so errno needs to be checked */
 	    || ((nice=getpriority(PRIO_PROCESS, pid)) && errno)
 	  ) {

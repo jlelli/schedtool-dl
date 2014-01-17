@@ -39,40 +39,41 @@ _syscall3 (int, sched_getaffinity, pid_t, pid, unsigned int, len, unsigned long 
 #ifdef __x86_64__
 #define __NR_sched_setattr		314
 #define __NR_sched_getattr		315
-#define __NR_sched_setscheduler2	316
 #endif
 
 #ifdef __i386__
 #define __NR_sched_setattr		351
 #define __NR_sched_getattr		352
-#define __NR_sched_setscheduler2	353
 #endif
 
 #ifdef __arm__
-#define __NR_sched_setscheduler2	380
-#define __NR_sched_setattr		381
-#define __NR_sched_getattr		382
+#define __NR_sched_setattr		380
+#define __NR_sched_getattr		381
 #endif
 
 #define SF_SIG_RORUN	2
 #define SF_SIG_DMISS	4
 
 struct sched_attr {
-	int sched_priority;
-	unsigned int sched_flags;
+	__u32 size;
+	
+	__u32 sched_policy;
+	__u64 sched_flags;
+	
+	/* SCHED_NORMAL, SCHED_BATCH */
+	__s32 sched_nice;
+	
+	/* SCHED_FIFO, SCHED_RR */
+	__u32 sched_priority;
+	
+	/* SCHED_DEADLINE */
 	__u64 sched_runtime;
 	__u64 sched_deadline;
 	__u64 sched_period;
-	__u32 size;
-
-	__u32 __reserved;
 };
 
-#define sched_setscheduler2(pid, policy, param) \
-	syscall(__NR_sched_setscheduler2, pid, policy, param)
+#define sched_getattr(pid, attr) \
+	syscall(__NR_sched_getattr, pid, attr)
 
-#define sched_getattr(pid, attr, size) \
-	syscall(__NR_sched_getattr, pid, attr, size)
-
-#define sched_setattr(pid, param) \
-	syscall(__NR_sched_setattr, pid, param)
+#define sched_setattr(pid, attr) \
+	syscall(__NR_sched_setattr, pid, attr)
