@@ -125,7 +125,7 @@ struct engine_s {
 
 
 int engine(struct engine_s *e);
-int set_process(pid_t pid, int policy, struct sched_attr *p);
+int set_process(pid_t pid, int policy, struct sched_attr *p, unsigned int flags);
 static inline int val_to_char(int v);
 static char * cpuset_to_str(cpu_set_t *mask, char *str);
 static inline int char_to_val(int c);
@@ -391,6 +391,7 @@ int engine(struct engine_s *e)
 	exec_mode_special:
 		if(mode_set(e->mode, MODE_SETPOLICY)) {
 			struct sched_attr p;
+			unsigned int flags = 0;
 
 			p.size= sizeof(p);
 			p.sched_policy= e->policy;
@@ -406,7 +407,7 @@ int engine(struct engine_s *e)
 			 how much set-calls went wrong
                          set_process returns -1 upon failure
 			 */
-			tmpret=set_process(pid,e->policy,&p);
+			tmpret=set_process(pid,e->policy,&p,flags);
 			ret += tmpret;
 
                         /* don't proceed as something went wrong already */
@@ -462,7 +463,7 @@ int engine(struct engine_s *e)
 }
 
 
-int set_process(pid_t pid, int policy, struct sched_attr *p)
+int set_process(pid_t pid, int policy, struct sched_attr *p, unsigned int flags)
 {
 	int ret;
 
@@ -475,7 +476,7 @@ int set_process(pid_t pid, int policy, struct sched_attr *p)
 #endif
 
 
-	if((ret=sched_setattr(pid, p))) {
+	if((ret=sched_setattr(pid, p, flags))) {
 
                 /* la la pointer mismatch .. lala */
 		decode_error((CHECK_RANGE_POLICY(policy) ? msg1 : msg2),
@@ -743,16 +744,24 @@ void print_process(pid_t pid)
 {
 	int policy, nice;
 	struct sched_attr p;
+	unsigned int flags = 0;
 	cpu_set_t aff_mask;
 	CPUSET_HEXSTRING(aff_mask_hex);
 
 
 	CPU_ZERO(&aff_mask);
+	p.size= sizeof(p);
+	p.sched_policy= 0;
+	p.sched_priority= 0;
+	p.sched_runtime= 0;
+	p.sched_deadline= 0;
+	p.sched_period= 0;
+	p.sched_flags= 0;
 
 	/* strict error checking not needed - it works or not. */
         errno=0;
 	if( ((policy=sched_getscheduler(pid)) < 0)
-	    || (sched_getattr(pid, &p) < 0)
+	    || (sched_getattr(pid, &p, sizeof(p), flags) < 0)
 	    /* getpriority may successfully return negative values, so errno needs to be checked */
 	    || ((nice=getpriority(PRIO_PROCESS, pid)) && errno)
 	  ) {

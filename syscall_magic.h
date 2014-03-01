@@ -56,24 +56,24 @@ _syscall3 (int, sched_getaffinity, pid_t, pid, unsigned int, len, unsigned long 
 
 struct sched_attr {
 	__u32 size;
-	
+
 	__u32 sched_policy;
 	__u64 sched_flags;
-	
+
 	/* SCHED_NORMAL, SCHED_BATCH */
 	__s32 sched_nice;
-	
+
 	/* SCHED_FIFO, SCHED_RR */
 	__u32 sched_priority;
-	
+
 	/* SCHED_DEADLINE */
 	__u64 sched_runtime;
 	__u64 sched_deadline;
 	__u64 sched_period;
 };
 
-#define sched_getattr(pid, attr) \
-	syscall(__NR_sched_getattr, pid, attr)
+#define sched_getattr(pid, attr, size, flags) \
+	syscall(__NR_sched_getattr, pid, attr, size, flags)
 
-#define sched_setattr(pid, attr) \
+#define sched_setattr(pid, attr, flags) \
 	syscall(__NR_sched_setattr, pid, attr)
